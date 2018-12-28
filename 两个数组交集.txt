@@ -1,0 +1,78 @@
+/**
+ * Return an array of size *returnSize.
+ * Note: The returned array must be malloced, assume caller calls free().
+ */
+void Swap(int A[], int i, int j)
+{
+    int temp = A[i];
+    A[i] = A[j];
+    A[j] = temp;
+}
+
+int Partition(int A[], int left, int right)  // 划分函数
+{
+    int pivot = A[right];               // 这里每次都选择最后一个元素作为基准
+    int tail = left - 1;                // tail为小于基准的子数组最后一个元素的索引
+    for (int i = left; i < right; i++)  // 遍历基准以外的其他元素
+    {
+        if (A[i] <= pivot)              // 把小于等于基准的元素放到前一个子数组末尾
+        {
+            Swap(A, ++tail, i);
+        }
+    }
+    Swap(A, tail + 1, right);           // 最后把基准放到前一个子数组的后边，剩下的子数组既是大于基准的子数组
+                                        // 该操作很有可能把后面元素的稳定性打乱，所以快速排序是不稳定的排序算法
+    return tail + 1;                    // 返回基准的索引
+}
+
+void QuickSort(int A[], int left, int right)
+{
+    if (left >= right)
+        return;
+    int pivot_index = Partition(A, left, right); // 基准的索引
+    QuickSort(A, left, pivot_index - 1);
+    QuickSort(A, pivot_index + 1, right);
+}
+
+int* intersect(int* nums1, int nums1Size, int* nums2, int nums2Size, int* returnSize) {
+    
+    int len = nums2Size;
+    int i, j, k = 0;
+    int flag = 0;
+    int *array_bak;
+    
+    /* 快速排序 */
+    QuickSort(nums1, 0, nums1Size - 1);
+    QuickSort(nums2, 0, nums2Size - 1);
+    
+    /* 处理特殊情况并获取数组长度 */
+    if(nums1Size == 0)
+        return;
+    else if(nums2Size == 0)
+        return;
+    else if(nums1Size < nums2Size)
+        len = nums1Size;
+    
+    int array[len];
+    
+    /* 判断数组中是否有交集 */
+    for(i = 0; i < nums1Size; i++)
+    {
+        for(j = flag; j < nums2Size; j++)
+        {            if(nums1[i] == nums2[j])
+            {
+                array[k] = nums2[j];
+                k++;
+                flag = j + 1;
+                break;
+            }
+        }
+    }
+    /* 返回数组大小 */
+    *returnSize = k;
+    /* 为返回数组分配空间 */
+    array_bak = (int *)malloc(sizeof(int) * k);
+    /* 为返回数组赋值 */
+    memcpy(array_bak, array, sizeof(int) * k);
+    return array_bak;
+}

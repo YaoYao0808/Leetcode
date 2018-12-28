@@ -1,0 +1,56 @@
+//PS：leetcode中的代码，报错int a[k]=[0];
+void rotate(int* nums, int numsSize, int k) {
+    //旋转数组可将数组分为两部分
+    //1.先将左部分存储在数组a中
+    int a[k]=0;
+    // for(int i=0;i<k;i++){
+    //    int a[i]=0;
+    // }
+    
+    for(int i=0;i<k;i++){
+        a[i]=nums[i];
+    }
+    //2.右半部分向左边移动k位
+    int j=k-1;
+    while(j<numsSize-1){
+        int temp=nums[j];
+        nums[j]=nums[j+1];
+        nums[j+1]=temp;
+        j++;
+    }
+    //3.将a中的数据存储到最后
+    int inter=numsSize-k;
+    for(int i=0;i<k;i++){
+           nums[inter+i]=a[i];
+    }
+}
+
+
+//要考虑k=6的情况
+void rotate(int* nums, int numsSize, int k) {
+    int temp[numsSize];
+    int p=0;
+    
+    for(int i=0;i<numsSize;i++){
+        temp[i]=nums[i];
+    }
+    for(int j=0;j<numsSize;j++){
+        p=j+k;
+        nums[p]=temp[j];
+    }
+}
+
+
+正确代码：
+void rotate(int* nums, int numsSize, int k) {
+    int temp[numsSize],p=0;
+    for(int i=0;i<numsSize;i++)
+        temp[i]=nums[i];
+    for(int j=0;j<numsSize;j++){
+        p=(j+k)%numsSize;
+        nums[p]=temp[j];
+        // p=j+k;
+        // nums[p]=temp[j];
+    }
+    return *nums;
+}

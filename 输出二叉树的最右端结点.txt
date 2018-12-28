@@ -1,0 +1,97 @@
+解法一：层次遍历，增加lno
+typedef struct
+{
+	BTNode *p;
+	int lno;//结点所在层次号
+}
+int RightNode(BTNode *b)
+{
+	int front,rear;//队列用到的front,rear
+	BTNode *que[maxSize];//常用队列的定义
+	fron=rear=0;
+	int Lno;
+	BTNode *q;//q用来存储出队时的结点
+
+	if(b!=NULL)
+	{
+		rear=(rear+1)%maxSize;
+		que[rear]=p;
+		que[rear].lno=1;//树根所在的层次号设为1，此为已知条件
+
+		while(front!=rear)
+		{
+			front=(front+1)%maxSize;
+			q=que[front];
+			Lno=que.[front].lno;
+
+			if(q->lchild!=NULL)
+			{
+				rear=(rear+1)%(maxSize);
+				que[rear]=q->lchild;
+				que[rear].lno=Lno+1;
+			}
+			if(q->rchild!=NULL)
+			{
+				rear=(rear+1)%maxSize;
+				que[rear]=q->rchild;
+				que[rear].lno=Lno+1;
+			}
+		}
+	}
+	//for循环找出同一层中最后入队的元素即为最右端结点
+	//Lno中存储了这棵树的最大层树，rear中存储的是队列中所有的结点
+	for(i=1;i<=Lno;i++)
+	{
+		n=0;
+		for(j=1;j<=rear;j++)
+		{
+			if(que[j].lno==i)
+				++n;
+			if(max<n)
+				max=n;
+		}
+		print(que[max])
+	}
+}
+
+解法二：
+//python:注意在Python的实际编程中并没有指针，而是用引用来代替
+void dfs (TreeNode* root, int level, vector<int> &re)
+{
+    if(!root)
+        return;
+    if(re.size()==level)
+        re.push_back(root->val);
+    else
+        re[level]=root->val;
+    dfs(root->left, level+1, re);
+    dfs(root->right, level+1, re);
+}
+dfs(root,0,re);
+说明：由于每一层只会存在一个最右端结点，因此超出层数的覆盖替换即可。
+
+解法三：宽度遍历bfs
+vector<int> levelRight(TreeNode * root){
+  vector<int> ans;
+  if(root==nullptr)
+    return ans;
+  queue<TreeNode *> bfs;
+  bfs.push(root);
+  while(!bfs.empty()){
+    int n=bfs.size(), aa=0;
+    for(int i=0; i<n; ++i){
+        TreeNode *temp=bfs.front();
+        bfs.pop();
+        aa=temp->val;
+        if(temp->left){
+            bfs.push(temp->left);
+        }
+        if(temp->right){
+            bfs.push(temp->right);
+        }
+    }
+    ans.push_back(aa);
+  }
+  return ans;
+}
+

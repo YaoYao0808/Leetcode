@@ -1,0 +1,23 @@
+typedef struct LNode
+{
+	int data;
+	struct LNode *next;
+}LNode;
+
+//1.头插法建立单链表
+void createlistR(LNode *&C,int a[],int n)
+{
+	LNode *s,*r;//s用来指向新申请的结点，r用来指向C的终端结点
+	C=(LNode*)malloc(sizeof(LNode));//申请C的头结点空间
+	C->next=NULL;
+	r=C;//此时头结点就是终端结点
+	
+	for(int i=0;i<n;++i)
+	{
+		s=(LNode*)malloc(sizeof(LNode));
+		s->data=a[i];
+		r->next=s;
+		r=r->next;
+	}
+	r->next=NULL;
+}

@@ -1,0 +1,48 @@
+题目：
+给定一个由整数组成的非空数组所表示的非负整数，在该数的基础上加一。
+
+最高位数字存放在数组的首位， 数组中每个元素只存储一个数字。
+
+你可以假设除了整数 0 之外，这个整数不会以零开头。
+示例如下：
+输入: [1,2,3]
+输出: [1,2,4]
+解释: 输入数组表示数字 123。
+
+分析存在如下三种情况：
+1.全进位：[9,9,9]  --> [1,0,0,0]  此时需要扩大数组长
+
+/.
+2.非全进位:	①半进位[1,1,9] --> [1,2,0]
+			②不进位[1,2,3] --> [1,2,4]
+			
+int plusOne(int* digits,int digitsSize,int* returnSize)
+{
+	int result = (int*)malloc(sizeof(int)*(digitsSize + 1));
+	int i;
+	for(i=0;i < digitsSize;i++){
+		if(digits[i]!=9)
+			break;
+	}
+	//判断i是否已经到了个位，即是否为全进位
+	if(i==digitsSize){
+		*returnSize = digitsSize + 1;
+		result[0]=1;
+		for(int i=1;i<digitsSize;i++)
+			result[i]=0;
+		return result;
+	}
+	
+	i=digitsSize-1;
+	result[i] = digits[i+1];
+	for(i;i>0;i--){
+		if(result[i] == 10){ //判断是否为半进位的情况
+			result[i]=0;
+			result[i-1] = digits[i-1];
+		}
+		else
+			result[i-1] = digits[i-1];
+	}
+	*returnSize = digitsSize;
+	return result;
+}

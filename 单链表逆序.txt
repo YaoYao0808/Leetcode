@@ -1,0 +1,61 @@
+解法一：耗费额外的存储空间
+void reverse(LNode *C)
+{
+	LNode *p;
+	p=C;
+	int count=0;
+	
+	//先获取链表C中的元素个数
+	while(p!=NULL)
+	{
+		count++;
+		p=p->next;
+	}
+	int a[count]={0};//定义静态数组并用0初始化
+	int i=0; //索引数组a
+	//获取单链表中的元素
+	while(p!=NULL)
+	{
+		p=p->next;
+		a[i++]=p->data;
+	}
+	//根据数组建立单链表
+	LNode *s,*r;
+	L=(LNode*)malloc(sizeof(LNode));
+	L->next=NULL;
+	r=L;//此时头结点就是终端结点
+	
+	for(int i=0;i<count;++i)
+	{
+		s=(LNode*)malloc(sizeof(LNode));
+		s->data=a[i];
+		r->next=s;
+		r=r->next;
+	}
+	r->next=NULL;
+}
+解法二：循环迭代法
+typedef struct LNodeDouble
+{
+	int data;
+	struct LNodeDouble *prev;
+	struct LNodeDouble *next;
+}LNodeDouble;
+LNodeDouble *Reverse(LNodeDouble *head)
+{
+	LNodeDouble *next;
+	LNodeDouble *prev=NULL;
+	
+	while(head!=NULL)
+	{
+		next=head->next;
+		head->next=prev
+		prev=head
+		head=next
+	}
+}
+
+解法三：递归法
+参考链接：
+https://blog.csdn.net/autumn20080101/article/details/7607148
+对于线性数据结构，循环迭代比较清晰明了；对于树状数据结构，递归较好。
