@@ -1,0 +1,76 @@
+题目：
+实现 strStr() 函数。
+
+给定一个 haystack 字符串和一个 needle 字符串，在 haystack 字符串中找出 needle 字符串出现的第一个位置 (从0开始)。如果不存在，则返回  -1。
+
+思路一：暴力算法匹配 
+
+注意：最后判断使用子串needle的索引j来判断是否完成匹配
+int strStr(char* haystack, char* needle) {
+    int haystack_Len = strlen(haystack);
+    int needle_len = strlen(needle);
+    int i=0,j=0,k=0;
+    int flag =0;
+    
+    if(needle_len == 0)
+        return 0;
+    
+    if(haystack_Len == 0)
+        return -1;
+    
+    if(haystack_Len < needle_len)
+        return -1;
+    
+    while(i<haystack_Len && j<needle_len){
+        if(haystack[i] == needle[j]){
+            ++i;
+            ++j;
+        }
+        else{
+            j=0;
+            i=++k;
+        }
+    }
+//     用j来判断是否已经匹配完成
+    if (j >= needle_len) {
+			return k;
+		} else
+			return -1;
+}
+
+思路二：可使用KMP匹配
+void getnext(Str substr,Str int next[])
+{
+	int i=1,j=0;
+	next[1]=0;
+	while(i<substr.length)
+	{
+		if(j==0 || substr.ch[i]==substr.ch[j])
+		{
+			++i;
+			++j;
+			next[i]=j;
+		}
+		else
+			j=next[j];
+	}
+}
+
+int KMP(Str str,Str substr,int next[])
+{
+	int i=1,j=1;
+	while(i<=str.length && j<=substr.length)
+	{
+		if(j==0 || str.ch[i]==substr.ch[j])
+		{
+			++i；
+			++j;
+		}
+		else	
+			j=next[j];
+	}
+	if(j>substr.length)
+		return i-substr.length;
+	else
+		return 0;
+}
