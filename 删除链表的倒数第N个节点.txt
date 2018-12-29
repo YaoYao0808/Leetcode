@@ -1,0 +1,55 @@
+题目：
+给定一个链表，删除链表的倒数第 n 个节点，并且返回链表的头结点。
+
+示例：
+给定一个链表: 1->2->3->4->5, 和 n = 2.
+当删除了倒数第二个节点后，链表变为 1->2->3->5.
+
+注意考虑三种情况：
+1.链表长度小于n
+2.删除第一个元素，直接头结点head->next 
+3.常规情况
+
+gsy答案：
+struct ListNode* removeNthFromEnd(struct ListNode* head, int n) {
+    if(n==0)
+        return head;
+    
+    struct ListNode *p=head->next,*q=head->next,*pre=head,*temp=head;
+    int len=0;
+	//求出链表的长度，此处长度不算头结点
+    while(temp->next!=NULL){
+            temp = temp->next;
+            len++;
+        }
+    if((len+1)<n) return temp;
+    
+	//删除倒数第n个元素，即为删除链表第一个元素
+    if((len+1) == n){
+            return head->next;
+        }
+    int num = 1;
+    // p=head->next;
+    // q=head->next;
+    // pre=head;
+        
+    while(num<n){
+        num++;
+        p=p->next;
+    }
+    while(p->next!=NULL){
+        p=p->next;
+        pre=q;
+        q=q->next;
+    }
+    //删除:此处要考虑删除的结点为头节点
+    if(q==head)
+        head=head->next;
+    else
+    {
+        pre->next=q->next;
+        free(q);
+    }
+    
+    return head;
+}
