@@ -1,0 +1,21 @@
+题目：
+反转一个单链表。
+
+示例：
+输入: 1->2->3->4->5->NULL
+输出: 5->4->3->2->1->NULL
+
+思路一：迭代
+struct ListNode* reverseList(struct ListNode* head) {
+    //此处注意prev=NUll,最后一个结点的next肯定为NULL
+    struct ListNode *pre=NULL,*p=head,*q=head;
+    
+    while(p!=NULL){
+        q=p->next;
+        p->next=pre;
+        pre=p;
+        p=q;
+    }
+    return pre;
+}
+
