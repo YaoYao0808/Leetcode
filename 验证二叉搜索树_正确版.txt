@@ -1,0 +1,95 @@
+题目：
+给定一个二叉树，判断其是否是一个有效的二叉搜索树。
+
+假设一个二叉搜索树具有如下特征：
+
+节点的左子树只包含小于当前节点的数。
+节点的右子树只包含大于当前节点的数。
+所有左子树和右子树自身必须也是二叉搜索树。
+
+示例 1:
+输入:
+    2
+   / \
+  1   3
+输出: true
+
+示例 2:
+输入:
+    5
+   / \
+  1   4
+     / \
+    3   6
+输出: false
+解释: 输入为: [5,1,4,null,null,3,6]。
+     根节点的值为 5 ，但是其右子节点值为 4 。
+	 
+代码：
+
+/**
+ *解题思路：中序遍历，链栈
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     struct TreeNode *left;
+ *     struct TreeNode *right;
+  * };
+ */
+ 
+int flag;
+struct Node{//创建一个链栈节点
+    int val;
+    struct Node *next;
+};
+struct Stack{//创建一个链栈
+    struct Node *top;//指向链栈栈顶节点
+    int count;//记录链栈的节点个数
+};
+void InitStack(struct Stack *stack){//初始化一个空栈
+    stack->count = 0;
+    stack->top = NULL;
+}
+void PushStack(struct Stack *stack,int val){//压栈
+    struct Node *node;
+    node = (struct Node *)malloc(sizeof(struct Node));
+    if(stack->count > 0){
+        if(stack->top->val < val){//若不是第一个进栈的节点，则判断与栈顶节点的值大小，若小于栈顶节点值则说明不是二叉搜索树
+            node->val = val;
+            node->next = stack->top;
+            stack->top = node;
+            stack->count++;
+        }else{
+            flag = -1;//若不是二叉搜索树设置全局标志位flag为-1;
+            return;
+        }
+    }else{//第一个值进栈
+        node->val = val;
+        node->next = stack->top;
+        stack->top = node;
+        stack->count++;
+    }
+}
+void Inorder(struct TreeNode *root,struct Stack *stack){//中序遍历
+    if(root == NULL){
+        return;
+    }
+    Inorder(root->left,stack);
+    PushStack(stack,root->val);
+    Inorder(root->right,stack);
+}
+bool isValidBST(struct TreeNode *root) {
+    flag = 0;
+    struct Stack *stack;
+    stack = (struct Stack *)malloc(sizeof(struct Stack));
+    InitStack(stack);
+    Inorder(root,stack);
+    if(flag == -1){
+        return 0;
+    }
+    return 1;
+}
+
+思路说明：若为一颗有效的二叉搜索树，当采用中序遍历时(左子树，根节点，右子树),此时应是依次递增的大小关系。
+		  因此，若从左往右依次入栈节点时，即将入栈的节点应都大于此时栈中的栈顶节点，否则就不满足一棵有效的二叉搜索树
+		  
