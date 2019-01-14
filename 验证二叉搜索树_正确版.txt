@@ -25,7 +25,7 @@
 解释: 输入为: [5,1,4,null,null,3,6]。
      根节点的值为 5 ，但是其右子节点值为 4 。
 	 
-代码：
+代码1：
 
 /**
  *解题思路：中序遍历，链栈
@@ -92,4 +92,36 @@ bool isValidBST(struct TreeNode *root) {
 
 思路说明：若为一颗有效的二叉搜索树，当采用中序遍历时(左子树，根节点，右子树),此时应是依次递增的大小关系。
 		  因此，若从左往右依次入栈节点时，即将入栈的节点应都大于此时栈中的栈顶节点，否则就不满足一棵有效的二叉搜索树
+	
+代码2：
+bool isTree(struct TreeNode *node,int min,int max)
+{
+	 if (node == NULL) return true;   
+    if (node->val < min || node->val > max) return false;  //超出目前子树所在范围，不算做树
+    if (node->left != NULL && node->val == INT_MIN) return false;//有左子树但本身最小，不算
+    if (node->right != NULL && node->val == INT_MAX) return false;//有右子树但本身最大，不算
+    return isTree(node->left, min, node->val - 1) && isTree(node->right, node->val + 1, max);  //如果目前正常，去分别搜索他的左右子树，更新子树范围，作者很皮很牛逼
+}
+ 
+bool isValidBST(struct TreeNode* root) {
+	if (!root)  //如果是空树，是二叉搜索树
+		return true;
+    if(root->left==NULL && root->right ==NULL) //如果是单元素，是二叉搜索树
+        return true;
+	return isTree(root, INT_MIN, INT_MAX);  //否则，正常判断
+}
+代码2思路说明：
+if 是空树 或者 只有一个元素
+		则是二叉搜索树
+if 该节点的值<MIN 或者 该节点的值>MAX
+		则不算做树，因此超出了范围
+if 	该节点有左子树，但是该节点已经是最小值
+		错误
+if  该节点有右子树，但是该节点已经是最大值
+        错误
+对于递归左子树来说，其最大值应是根结点值-1
+对于递归右子树来说，其最小值应是根结点值+1
+		  
+		  
+		  
 		  
