@@ -1,0 +1,77 @@
+题目：
+给定一个包含 n 个整数的数组 nums，判断 nums 中是否存在三个元素 a，b，c ，使得 a + b + c = 0 ？找出所有满足条件且不重复的三元组。
+
+注意：答案中不可以包含重复的三元组。
+
+例如, 给定数组 nums = [-1, 0, 1, 2, -1, -4]，
+
+满足要求的三元组集合为：
+[
+  [-1, 0, 1],
+  [-1, -1, 2]
+]
+
+/**
+ * Return an array of arrays of size *returnSize.
+ * Note: The returned array must be malloced, assume caller calls free().
+ */
+void quickSort(int* nums,int first,int end){
+    int temp,l,r;
+    if(first>=end)return;
+    temp=nums[first];
+    l=first;r=end;
+    while(l<r){
+        while(l<r && nums[r]>=temp)r--;
+        if(l<r)nums[l]=nums[r];
+        while(l<r && nums[l]<=temp)l++;
+        if(l<r)nums[r]=nums[l];
+    }
+    nums[l]=temp;
+    quickSort(nums,first,l-1);
+    quickSort(nums,l+1,end);
+} //快排代码
+
+int** threeSum(int* nums, int numsSize, int* returnSize) {
+    int i,sum,top=-1,begin,end;
+    int** res=(int**)malloc(sizeof(int*)*(numsSize*(numsSize-1)*(numsSize-2))/6);
+    if(numsSize<3){
+        *returnSize=0;
+        return res;
+    }  //组内元素小于三时直接返回;
+    quickSort(nums,0,numsSize-1);//快排;
+	
+    for(i=0;i<numsSize;i++){
+        if(nums[i]>0)
+            break;//首元素大于0，跳出for，已经查找到所有符合条件的三元组;
+        if(i>0 && nums[i]==nums[i-1])continue; //与上次循环的数一样，跳过这个数，执行i++向下找;
+        begin=i+1;end=numsSize-1; //固定i后在i+1/尾两处放入指针，开始循环;
+        while(begin<end){
+            sum=nums[i]+nums[begin]+nums[end];
+            if(sum==0){
+                top++;
+                res[top]=(int*)malloc(sizeof(int)*3);
+                res[top][0]=nums[i];res[top][1]=nums[begin];res[top][2]=nums[end];
+                begin++;end--;
+				//此处两行代码避免重复  
+                while(begin<end && nums[begin]==nums[begin-1])begin++;
+                while(begin<end && nums[end]==nums[end+1])end--;
+            }
+            else if(sum>0) end--;
+            else begin++;
+        } //while
+    } //for
+    *returnSize=top+1; //top作为计数器，即为需要返回的长度;
+    return res;
+}
+
+思路说明：
+1，先对数组进行快速排序，从小到大排序好
+2，一个for循环，遍历，由于寻找三个数的和为0的组合，因此
+   先固i=0为第一个数，第二三个数依次初始化为除去第一个数的首尾两个数
+     若此时三数之和大于0，则end--
+	 若此时三数之和小于0，则begin++
+	 若此时三数之和等于0，则进行存储
+	   等于0时要判断是否重复：
+	     若nums[begin]=nums[begin-1],则表明重复，继续往后遍历,begin++
+		 若nums[end]=nums[end+1],则表明重复，继续往后遍历,end--
+	for循环继续，i++
