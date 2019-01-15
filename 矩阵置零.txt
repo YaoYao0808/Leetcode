@@ -1,0 +1,87 @@
+题目：
+给定一个 m x n 的矩阵，如果一个元素为 0，则将其所在行和列的所有元素都设为 0。请使用原地算法。
+示例 1:
+
+输入: 
+[
+  [1,1,1],
+  [1,0,1],
+  [1,1,1]
+]
+输出: 
+[
+  [1,0,1],
+  [0,0,0],
+  [1,0,1]
+]
+示例 2:
+
+输入: 
+[
+  [0,1,2,0],
+  [3,4,5,2],
+  [1,3,1,5]
+]
+输出: 
+[
+  [0,0,0,0],
+  [0,4,5,0],
+  [0,3,1,0]
+]
+代码一：错误版
+void setZeroes(int** matrix, int matrixRowSize, int matrixColSize) {
+    //循环依次遍历，若碰到为0的元素，则将所在行的所在列的元素全部置0
+    for(int i=0;i<matrixRowSize;i++){
+        for(int j=0;j<matrixColSize;j++){
+            if(matrix[i][j]==0){
+                //先将第i行的元素置0
+                for(int a=0;a<matrixColSize;a++)
+                    matrix[i][a]=0;
+                //再将第i列的元素置0
+                for(int a=0;a<matrixRowSize;a++)
+                    matrix[a][j]=0;
+            }
+        }
+    }
+}
+//上述代码问题：后续for循环中，无法判断该0是本身就为0，还是转换过来的
+
+代码二：正确版_by gsy
+void setZeroes(int** matrix, int matrixRowSize, int matrixColSize) {
+    //给每一行每一列加一个标记,bool型，若改行还未被转换过，则为true；若已经被转换为则为false
+    //因此后面的判断条件为：该值为0，且 ，该行的Bool为True
+    //循环依次遍历，若碰到为0的元素，则将所在行的所在列的元素全部置0
+    bool row[matrixRowSize];
+    bool col[matrixColSize];
+    
+    bool isZero[matrixRowSize][matrixColSize];
+    for(int i=0;i<matrixRowSize;i++){
+        for(int j=0;j<matrixColSize;j++){
+            if(matrix[i][j]==0)
+               isZero[i][j]=true;
+            else
+               isZero[i][j]=false;
+        }
+    }
+    //初始化
+    for(int i=0;i<matrixRowSize;i++)
+        row[i]=true;
+    for(int i=0;i<matrixColSize;i++)
+        col[i]=true;
+    
+    
+    for(int i=0;i<matrixRowSize;i++){
+        for(int j=0;j<matrixColSize;j++){
+            if((matrix[i][j]==0 && row[i]==true && col[j]==true) || isZero[i][j]==true){
+                //先将第i行的元素置0
+                row[i]=false;
+                col[j]=false;
+                for(int a=0;a<matrixColSize;a++)
+                    matrix[i][a]=0;
+                //再将第i列的元素置0
+                for(int a=0;a<matrixRowSize;a++)
+                    matrix[a][j]=0;
+            }
+        }
+    }
+}
