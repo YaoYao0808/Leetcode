@@ -1,0 +1,130 @@
+题目：
+设计哈希映射
+不使用任何内建的哈希表库设计一个哈希映射
+
+具体地说，你的设计应该包含以下的功能
+
+put(key, value)：向哈希映射中插入(键,值)的数值对。如果键对应的值已经存在，更新这个值。
+get(key)：返回给定的键所对应的值，如果映射中不包含这个键，返回-1。
+remove(key)：如果映射中存在这个键，删除这个数值对。
+
+示例：
+MyHashMap hashMap = new MyHashMap();
+hashMap.put(1, 1);          
+hashMap.put(2, 2);         
+hashMap.get(1);            // 返回 1
+hashMap.get(3);            // 返回 -1 (未找到)
+hashMap.put(2, 1);         // 更新已有的值
+hashMap.get(2);            // 返回 1 
+hashMap.remove(2);         // 删除键为2的数据
+hashMap.get(2);            // 返回 -1 (未找到) 
+
+代码：
+//此题思路用的链地址法
+
+//key值对应着val
+#define SIZE 50000
+struct node {
+    int key;
+    int val;
+    struct node* next;
+};
+
+typedef struct {
+    struct node* head[SIZE];
+} MyHashMap;
+ 
+/** Initialize your data structure here. */
+MyHashMap* myHashMapCreate() {
+    MyHashMap* obj = (MyHashMap*)malloc(sizeof(MyHashMap));
+    for (int i = 0;i < SIZE;i++)
+        obj->head[i] = NULL;
+    return obj;
+}
+void creat(MyHashMap* obj,int key,int value)
+{
+    struct node* p = (struct node*)malloc(sizeof(struct node));
+    p->key = key;
+    p->val = value;
+	//链表插入元素的代码
+    p->next = obj->head[key%SIZE];
+    obj->head[key%SIZE] = p;
+}
+
+/** value will always be positive. */
+void myHashMapPut(MyHashMap* obj, int key, int value) {
+    int t = key % SIZE;
+    if (obj->head[t] == NULL)
+    {
+        creat(obj,key,value);
+    }
+    else
+    {
+        struct node* p = obj->head[t];
+        while (p && p->key != key)  p = p->next;
+        if (p == NULL)
+        {
+            creat(obj,key,value);
+        }
+        else
+        {
+			//替换更新
+            p->val = value;
+        }
+    }
+}
+ 
+/** Returns the value to which the specified key is mapped, or -1 if this map contains no mapping for the key */
+int myHashMapGet(MyHashMap* obj, int key) {
+    int t = key % SIZE;
+    if (obj->head[t] != NULL)
+    {
+        struct node* p = obj->head[t];
+        while (p && p->key != key)  p = p->next;
+        if (p->key == key)
+            return p->val;
+    }
+    return -1;
+}
+ 
+/** Removes the mapping of the specified value key if this map contains a mapping for the key */
+void myHashMapRemove(MyHashMap* obj, int key) {
+    int t = key % SIZE;
+    if (obj->head[t] != NULL)
+    {
+        struct node* p = obj->head[t];
+        struct node* fp = p;
+        while (p && p->key != key)
+        {
+            fp = p;
+            p = p->next;
+        }
+        if (p != NULL && fp != p)
+            fp->next = p->next;
+        if (fp == p)
+            obj->head[t] = p->next;
+    }
+}
+ 
+void myHashMapFree(MyHashMap* obj) {
+    for (int i = 0;i < SIZE;i++)
+    {
+        struct node* p = obj->head[i];
+        while (p)
+        {
+            struct node* q = p->next;
+            free(p);
+            p = q;
+        }
+    }
+    free(obj);
+}
+ 
+/**
+ * Your MyHashMap struct will be instantiated and called as such:
+ * struct MyHashMap* obj = myHashMapCreate();
+ * myHashMapPut(obj, key, value);
+ * int param_2 = myHashMapGet(obj, key);
+ * myHashMapRemove(obj, key);
+ * myHashMapFree(obj);
+ */
