@@ -1,0 +1,110 @@
+题目：
+设计哈希集合
+不使用任何内建的哈希表库设计一个哈希集合
+
+具体地说，你的设计应该包含以下的功能
+
+add(value)：向哈希集合中插入一个值。
+contains(value) ：返回哈希集合中是否存在这个值。
+remove(value)：将给定值从哈希集合中删除。如果哈希集合中没有这个值，什么也不做。
+
+示例:
+
+MyHashSet hashSet = new MyHashSet();
+hashSet.add(1);         
+hashSet.add(2);         
+hashSet.contains(1);    // 返回 true
+hashSet.contains(3);    // 返回 false (未找到)
+hashSet.add(2);          
+hashSet.contains(2);    // 返回 true
+hashSet.remove(2);          
+hashSet.contains(2);    // 返回  false (已经被删除)
+
+代码一：
+#define SIZE 20000
+typedef struct {
+    int* hash;
+    int* visited;
+} MyHashSet;
+ 
+/** Initialize your data structure here. */
+MyHashSet* myHashSetCreate() {
+    MyHashSet* H = (MyHashSet*)malloc(sizeof(MyHashSet));
+    H->hash = (int*)malloc(sizeof(int)* SIZE);
+    H->visited = (int*)malloc(sizeof(int)* SIZE);
+    memset(H->hash,0,sizeof(int)* SIZE);
+    memset(H->visited,0,sizeof(int)* SIZE);
+    return H;
+}
+
+//定义哈希函数
+int myhashfun(int k)
+{
+    return (k % SIZE);  //此时size定义的为20000，因此内存空间可以存储足够的内容数据
+}
+
+//在哈希表中增加元素key
+void myHashSetAdd(MyHashSet* obj, int key) {
+    int t = myhashfun(key);
+	
+	//在存储数据时，考虑两种情况：①该映射位置已经存储且不为该值，则往后挪一位；②该位置为空，则直接存储即可
+    while (obj->visited[t] != 0 && obj->hash[t] != key)
+        t = myhashfun(t+1);
+    if (obj->visited[t] == 0)
+    {
+        obj->hash[t] = key;
+        obj->visited[t] = 1;
+    }
+}
+
+//删除指定key值的元素，要先查找到再进行删除
+void myHashSetRemove(MyHashSet* obj, int key) {
+    int t = myhashfun(key);
+	//在删除数据时，考虑两种情况：①该映射位置已经存储数据且不为该值，则挪一位继续擦查找；②查找到则直接删除，将visit的值设0即可
+    while (obj->visited[t] != 0 && obj->hash[t] != key)
+        t = myhashfun(t+1);
+    if (obj->hash[t] == key)
+    {
+        obj->visited[t] = 0;
+    }
+}
+ 
+//判断此哈希表中是否存在值为key的数据，若不存在则为flase，若存在则为true
+bool myHashSetContains(MyHashSet* obj, int key) {
+    int t = myhashfun(key);
+	//该位置已经存储数据但是不为该值，因此挪动一位继续查找
+    while (obj->visited[t] != 0 && obj->hash[t] != key)
+        t = myhashfun(t+1);
+	//该位置已经存储数据且为该值，则已经找到，返回true
+    if (obj->visited[t] != 0 && obj->hash[t] == key)
+        return true;
+	
+    int count = 0;
+    while (count < SIZE){
+		//该映射位置未存储数据，则表示未找到，直接返回false
+        if (obj->visited[t] == 0 && obj->hash[t] == 0)
+            return false;
+		//仍然要遍历整个哈希表长度寻找，以防因为删除而漏掉的情况
+        t = myhashfun(t+1);
+        count++;
+        if (obj->hash[t] == key)
+            return true;
+    }
+    return false;
+}
+ 
+void myHashSetFree(MyHashSet* obj) {
+    free(obj->hash);
+    free(obj->visited);
+    free(obj);
+}
+ 
+/**
+ * Your MyHashSet struct will be instantiated and called as such:
+ * struct MyHashSet* obj = myHashSetCreate();
+ * myHashSetAdd(obj, key);
+ * myHashSetRemove(obj, key);
+ * bool param_3 = myHashSetContains(obj, key);
+ * myHashSetFree(obj);
+ */
+

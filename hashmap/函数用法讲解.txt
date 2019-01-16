@@ -1,0 +1,12 @@
+函数用法讲解：
+1.memset
+  需要的头文件
+  在C中 <string.h>
+  在C++中　<cstring>
+  函数常用于内存空间初始化
+eg1:
+  char str[100];
+  memset(str,0,100);
+ 
+  
+  
