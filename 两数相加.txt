@@ -1,0 +1,100 @@
+代码1：显示超时
+struct ListNode* addTwoNumbers(struct ListNode* l1, struct ListNode* l2) {    
+    if(l1 == NULL) return l2;
+    if(l2 == NULL) return l1;
+
+    struct ListNode *p=l1,*q=l2;
+    
+    struct ListNode *result=(struct ListNode *)malloc(sizeof(struct ListNode));
+    result->val=0;
+    
+    struct ListNode* p_end=result;
+    
+    int sum=0;
+    int carry=0;
+    int x=0;
+    int y=0;
+    
+    while(p!=NULL || q!=NULL){
+        if(p==NULL){
+            x=0;
+            y=q->val;
+        }
+        else if(q==NULL){
+            x=p->val;
+            y=0;
+        }else{
+            x=p->val;
+            y=q->val;
+        }
+        sum=x+y+carry;
+        carry=sum/10;
+        
+        int data=sum%10;
+    
+        struct ListNode* pp;
+        pp= (struct ListNode *)malloc(sizeof(struct ListNode));
+        p_end->next=pp;
+        pp->val=data;
+        p_end=p_end->next;
+//         pp->val=data;
+//         pp->next=NULL;
+        
+//         pp=pp->next;
+    }
+    return result;
+    
+}
+
+代码二：修改后  但是仍然存在Bug  
+struct ListNode* addTwoNumbers(struct ListNode* l1, struct ListNode* l2) {    
+
+    struct ListNode *p=l1,*q=l2;
+    
+    struct ListNode *result=(struct ListNode *)malloc(sizeof(struct ListNode));
+    result->val=0;
+    
+    struct ListNode* p_end=result;
+    
+    int sum=0;
+    int carry=0;
+    int x=0;
+    int y=0;
+    
+    while(true){
+		if(p==NULL && q=NULL && carry=0){
+			return result;
+		}
+		if(p==NULL && q=NULL){
+			struct ListNode* pp;
+			pp= (struct ListNode *)malloc(sizeof(struct ListNode));
+			p_end->next=pp;
+			return result;
+		}else if(l2==NULL){
+			int temp=l1->val+carry;
+			sum=temp%10;
+			carry=temp/10;
+			p=p->next;
+		}else if(l1==NULL){
+			int temp=l2-val+carry;
+			sum=temp%10;
+			carry=temp/10;
+			q=q->next;
+		}else{
+			int temp = l1->val + l2-val + carry;
+			sum=temp%10;
+			carry=temp/10;
+			p=p->next;
+			q=q->next;
+		}
+		
+		struct ListNode* pp;
+		pp= (struct ListNode *)malloc(sizeof(struct ListNode));
+		
+        p_end.next = pp
+        p_end = p_end.next;
+		
+	}
+    return result;
+    
+}
