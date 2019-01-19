@@ -18,19 +18,37 @@
 
 在真实的面试中遇到过这道题？
 
-思路一：水平扫描法_未实现
+思路一：水平扫描法_有bug
 对于字符串 ["flower","flow","flight"]来说，LCP(S1,S2)="fl"，LCP("fl",S3)="fl",又s==n，因此返回的最长公共前缀是"fl"
 停止条件是LCP的返回值为空时
 C语言代码：
-char* LCP(char* s1,char* s2){
-
-}
-
-char* longestCommonPrefix(char** strs, int strsSize) {
-	for(int i=0;i<strsSize-3;i++){
-		char ss=LCP(strs[i],strs[i+1]);
-		LCP(ss,strs[i+2]);
-	}
+char* longestCommonPrefix(char** strs, int strsSize)
+{
+    if(strsSize==0)
+        return "";
+    
+    // char prefix=strs[0];
+    char* prefix;
+    strcpy(prefix,strs[0]);  //string prefix = strs[0];
+    
+    for(int i=1;i<strsSize;i++)
+    {
+        
+        if(strlen(prefix)==0 || strlen(strs[i])==0)
+           return "";
+         
+        int len = strlen(prefix) < strlen(strs[i]) ? strlen(prefix) : strlen(strs[i]);
+        int j;
+        for (j = 0; j < len; ++j)
+        {
+            if (prefix[j] != strs[i][j])
+                break;
+        }
+        
+        strncpy(prefix, prefix, j);    //prefix = prefix.substr(0,j);
+    }
+    
+    return prefix;
 }
 
 思路二：
