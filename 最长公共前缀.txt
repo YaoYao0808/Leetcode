@@ -1,0 +1,83 @@
+题目：
+编写一个函数来查找字符串数组中的最长公共前缀。
+
+如果不存在公共前缀，返回空字符串 ""。
+
+示例 1:
+
+输入: ["flower","flow","flight"]
+输出: "fl"
+示例 2:
+
+输入: ["dog","racecar","car"]
+输出: ""
+解释: 输入不存在公共前缀。
+说明:
+
+所有输入只包含小写字母 a-z 。
+
+在真实的面试中遇到过这道题？
+
+思路一：水平扫描法_未实现
+对于字符串 ["flower","flow","flight"]来说，LCP(S1,S2)="fl"，LCP("fl",S3)="fl",又s==n，因此返回的最长公共前缀是"fl"
+停止条件是LCP的返回值为空时
+C语言代码：
+char* LCP(char* s1,char* s2){
+
+}
+
+char* longestCommonPrefix(char** strs, int strsSize) {
+	for(int i=0;i<strsSize-3;i++){
+		char ss=LCP(strs[i],strs[i+1]);
+		LCP(ss,strs[i+2]);
+	}
+}
+
+思路二：
+取出第一个字符串的第一个元素，依次和后面所有元素的第一个元素作比较
+    只要没有相等的，则break；
+    若都相等，则再取出第一个字符串的第二个元素，依次和后面所有元的第二个元素作比较
+代码：
+char* longestCommonPrefix(char** strs, int strsSize)
+{
+    /*
+    思路：
+    取出第一个字符串的第一个元素，依次和后面所有元素的第一个元素作比较
+    只要没有相等的，则break；
+    若都相等，则再取出第一个字符串的第二个元素，依次和后面所有元的第二个元素作比较
+    */
+    int i,j,flag;
+    char ch;
+    if(strsSize==1)
+        return *strs;
+    if(strsSize==0)
+        return "";
+    
+    for(i=0;;i++)  //学习for循环中间不加判断的写法
+    {
+        flag=0;
+        ch=strs[0][i];
+        for(j=1;j<strsSize;j++)
+        {
+            if( ch!=strs[j][i])
+            {
+                flag=1;
+                break;//此处Break是跳出内层for循环
+            }
+        }
+        if(flag==1)
+            break;//此处Break是跳出外层for循环
+    }
+    
+    //i=0表示所有字符串的第一个字符都不想等，依次最长公共前缀则为空
+    if(i==0)
+        return "";
+    //定义内存空间存储最长公共前缀，并设定最后一个字符为结束字符
+    char *p=malloc(sizeof(char)*i);
+    for(j=0;j<i;j++)
+    {
+        p[j]=strs[0][j];
+    }
+    p[j]='\0';
+    return p;
+}
