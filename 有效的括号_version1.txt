@@ -1,0 +1,53 @@
+题目：
+
+代码一：栈
+bool isValid(char* s)
+{
+    int size=strlen(s);//获取字符串长度
+	
+    if(size==0)
+    {
+    	printf("字符串的长度为0\n");
+    	return 1;
+	}
+	else
+	{
+		//初始化栈操作
+		char stack[size];
+    	int i;
+    	int top=0;//top指栈顶元素 
+	    stack[0]=s[0];  //初始化栈顶元素为s的第一个字符
+		
+	    for(i=1,top=0;i<size;)
+	    {
+			if(top==-1)   
+			{
+				top++;
+				stack[top]=s[i];
+				i++;
+			}
+   		 	else if((s[i]==')'&&stack[top]=='(') || (s[i]==']'&&stack[top]=='[') || (s[i]=='}'&&stack[top]=='{'))//如果前项后项括号种类相同方向相反，pop栈顶 
+   		 	{
+    			top--;
+    			i++;
+			}
+			else if((stack[top]=='('||stack[top]=='['||stack[top]=='{')&&(s[i]=='('||s[i]=='['||s[i]=='{'))//如果前项后项都是左括号，s[i]入栈 
+			{
+				top++; 
+				stack[top]=s[i];
+				i++;
+			}
+			else
+			{
+				printf("无效的括号\n");
+				return 0;
+			} 
+		}
+		if(top==-1&&size!=1)//考虑只输入一个元素的情况 
+		{
+			printf("所有括号有效\n");
+			return 1;
+		}
+	}
+    return 0;
+}
