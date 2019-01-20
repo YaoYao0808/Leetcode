@@ -1,0 +1,44 @@
+题目：合并两个有序链表
+示例：
+输入：1->2->4, 1->3->4
+输出：1->1->2->3->4->4
+
+题目条件一：将A和B归并成一个按元素值非递减有序的链表C
+
+vstruct ListNode* mergeTwoLists(struct ListNode* l1, struct ListNode* l2) {
+    struct ListNode* newNode;
+    struct ListNode* tail;
+    if(!l1)
+        return l2;
+    else if(!l2)
+        return l1;
+    else{
+        if(l1->val<l2->val){
+            newNode=l1;
+            l1=l1->next;
+        }
+        else{
+            newNode=l2;
+            l2=l2->next;
+        }
+        tail=newNode;
+        //在进入while循环，确定返回链表的第一个节点，这也是newNode的作用，后面移动指针都用tail
+        
+        while(l1&&l2){
+            if(l1->val<l2->val){
+                tail->next=l1;
+                l1=l1->next;
+            }
+            else{
+                tail->next=l2;
+                l2=l2->next;
+              
+            }  
+            tail=tail->next;
+        }
+        if(l1||l2)
+            tail->next=l1!=NULL?l1:l2;
+    }
+    return newNode;
+}
+
