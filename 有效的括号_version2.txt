@@ -1,0 +1,96 @@
+题目：
+
+思路：此版本的括号匹配是根据之前考研数据结构相关的版本改进
+代码：
+
+括号匹配思路：
+检验括号匹配的方法，就是对给定的字符串依次检验：
+若是左括号，入栈；若是右括号，出栈一个左括号判断是否与之匹配；是其他字符，不检验。
+检验到字符串尾，还要检查栈是否为空。只有栈空，整个字符串才是括号匹配的。
+
+
+#include "stdafx.h"
+
+using namespace std;
+
+#define stacksize 100   //定义栈的空间大小
+
+struct stack{      //定义栈的结构体
+     char strstack[stacksize];//定义栈的存储格式为字符型
+     int top;     //定义栈的栈顶变量
+};
+
+void InitStack(stack &s){    //定义一个新栈s，初始化栈顶为-1
+     s.top=-1;
+}
+
+char Push(stack &s, char a){    //入栈操作，将字符a入栈s
+     if(s.top==stacksize-1)   //当栈顶为栈空间大小-1，栈满
+          return 0;
+    s.top++;       //入栈操作一次，栈顶+1
+    s.strstack[s.top]=a;    //此时，栈顶元素为字符a
+    return a;
+}
+
+char Pop(stack &s){  //出栈操作
+    if(s.top==-1)     //当栈顶为-1时，栈空
+         return 0;
+    char a=s.strstack[s.top];    //将栈顶元素赋予字符a，并返回字符a，完成出栈操作
+    s.top--;
+    return a;
+}
+
+int Empty(stack &s,int re){     //定义判断栈是否为空的函数
+    if(s.top==-1)
+         return 1;//栈为空时返回值为1
+    else
+         return 0; //栈不为空时返回值为0
+}
+
+bool isValid (char * str){   //检查括号是否匹配的函数
+    stack s;
+    InitStack(s);
+    int strn=strlen(str);  //定义字符串长度为strn
+    for(int i=0;;i++)
+    {
+         char a=str[i];
+         switch(a){//对输入的字符a进行判断
+          case '(':
+          case '[':
+          case '{':
+               Push(s,a);//若是左括号，则进行入栈操作
+               break;
+              //若是右括号，则进行出栈操作，若出栈元素不是与输入相对应的左括号，则字符串括号中不匹配，返回
+         case ')':
+              if(Pop(s)!='(')
+                    return 0;
+              break;
+         case '}':
+               if(Pop(s)!='{')
+                   reutn 0;
+               break; -
+        case ']':
+               if(Pop(s)!=']')
+                   return 0;
+               break;
+         }
+    }
+    int re=0;//定义并初始化判断函数的返回值
+    re=Empty(s,re);//返回盘空函数的返回值
+    if(re==1)
+        return 1;//栈为空
+    else
+        return 0;//栈不为空，有左括号，即存在‘（’或'['或'{'未匹配
+}
+
+int main()   //主函数
+{
+    char str[100]; //定义一个单字符数组以存储键盘输入的字符串。
+    cout<<"请您输入一个长度小于100的字符串："<<endl;
+    cin>>str;    //从键盘输入字符存储到字符数组中，有输入则继续。
+    int re=Check(str);
+    if(re==1)
+        cout<<"您输入的字符串中的括号完全匹配！"<<endl;
+    else if(re==0)
+        cout<<"您输入的字符串中的括号不匹配！"<<endl;
+}
