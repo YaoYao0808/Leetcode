@@ -1,0 +1,64 @@
+题目：
+实现 int sqrt(int x) 函数。
+
+计算并返回 x 的平方根，其中 x 是非负整数。
+
+由于返回类型是整数，结果只保留整数的部分，小数部分将被舍去。
+
+示例 1:
+
+输入: 4
+输出: 2
+示例 2:
+
+输入: 8
+输出: 2
+说明: 8 的平方根是 2.82842..., 
+     由于返回类型是整数，小数部分将被舍去。
+	 
+代码一：通过  二分法
+int mySqrt(int x) 
+{
+	int low=1,high=x;
+	if(x > 46340)	 high=46340;// 46341*46341会溢出，平方根必然在1-46340之间
+    
+	int mid=(low+high)/2;
+	while(low<=high)
+	{
+		if(x/mid>=mid && x/(mid+1)<=mid)//x必然介于mid^2 和 mid*(mid+1)之间
+			return mid;   //考虑到溢出的可能，换成除法（虽然此处不会溢出）
+		else if(mid*mid<x) 
+			low=mid+1;
+		else  high=mid-1;
+        
+		mid=(low+high)/2;
+	}
+	return mid;
+}
+
+代码二： 暴力解法 不通过  未完待续
+int mySqrt(int x) {
+    /*
+    思路：暴力解法  平方根必然在1-46340
+    */
+    int cur=x;
+    // int num=(x/2);
+    int ret;
+    if(x==1) return 1;
+    int num;
+    
+    if (x >= 46340) 
+        num=46340;
+    else
+        num=(x/2);
+    
+    for(int i=0;i<=num;i++)
+    {
+        if((i*i)==cur)
+            ret=i;
+        if((long)(i*i)<cur && (long)((i+1)*(i+1))>cur)
+            ret=i;
+    }
+    return ret;
+}
+
