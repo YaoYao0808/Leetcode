@@ -1,0 +1,127 @@
+题目：
+有一棵二叉树，树上每个点标有权值，权值各不相同，请设计一个算法算出权值最大的叶节点 点到权值最小的叶节点的距离。
+二叉树每条边的距离为 1，一个节点经过多少条边到达另一 个节点为这两个节点之间的距离。 给定二叉树的根节点 root，请返回所求距离。
+
+
+#include <iostream>
+#include <vector>
+#include <string>
+#include <queue>
+#include <unordered_map>
+#include <map>
+#include <algorithm>
+using namespace std;
+
+struct TreeNode {
+    int val;
+    struct TreeNode *left;
+    struct TreeNode *right;
+    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+};
+
+//以前序遍历创建二叉树：根节点，左子树，右子树
+void CreateBiTree(TreeNode **T)//*T是指向BiTNode的指针
+{
+    *T=new TreeNode(0);
+    if(*T==NULL)//如果*T还是指向NULL，表示内存分配失败，退出程序
+        exit(OVERFLOW);
+    char ch;
+    cin>>ch;
+    if(ch=='#')
+        *T=NULL;
+    else
+    {
+        (*T)->val=ch-'0';//*T指向的节点的data分配内容，即生成根节点
+        CreateBiTree(&((*T)->left));//创建&(*T)->lchild临时变量，传入CreateBiTree，构造左子树
+        CreateBiTree(&((*T)->right));//创建&(*T)->rchild临时变量，传入CreateBiTree，构造右子树
+    }
+}
+
+/*
+分两大步
+1 标记每个节点的父节点，并且找出最大叶节点和最小叶节点
+    用map<int,pair<int,int>>标记每个子节点的父节点，first是子节点值，second是<父节点值，父节点位置>
+    用queue遍历二叉树的节点
+    依次把每个父节点的子节点push进队列，每取出一个节点处理，计数加1，然后处理取出节点的左右孩子进行标记
+    处理完之后，把取出的节点pop出去
+2 计算两个叶节点的最短路径
+    分别找出两个叶节点到树根的路径，公共部分以前的路径相加即最短路径
+*/
+class Tree {
+public:
+    int getDis(TreeNode* root) 
+    {
+        // write code here
+        //第1步
+        map<int, pair<int, int>> parent;//标记每个子节点的父节点：子节点值，父节点值，父节点位置
+        queue<TreeNode*> que;//按照层序遍历处理每个节点
+        que.push(root);
+        parent[root->val] = make_pair(0, 0);//树根的双亲设置为(0,0)
+        int max = -65535;
+        int min = 65536;
+        int cnt = 0;//每处理一个节点计数加1
+		
+        while (!que.empty())
+        {
+            //处理队列里的每个节点，每处理一个，计数加1。即cnt是目前处理的节点的序号（按层序遍历标序）。
+            TreeNode* temp = que.front();   
+            cnt++;
+            //处理该节点的左右孩子
+            if (temp->left)//如果该节点有左孩子，标记左孩子，并且把左孩子入队列
+            {
+                parent[(temp->left)->val] = make_pair(temp->val, cnt);
+                que.push(temp->left);
+            }
+            if (temp->right)//如果该节点有右孩子，标记右孩子，并且把右孩子入队列
+            {
+                parent[(temp->right)->val] = make_pair(temp->val, cnt);
+                que.push(temp->right);
+            }
+            if (temp->left == NULL &&temp->right == NULL)//如果该节点是叶子节点，需要比较它和max和min的大小
+            {
+                if (temp->val > max)
+                    max = temp->val;
+                if (temp->val < min)
+                    min = temp->val;
+            }
+            que.pop();  //每处理完一个节点则要删除该节点再进行递归
+        }
+        //第2步 计算两个叶节点的最短路径 找到公共部分  
+        vector<int> v1;
+        vector<int> v2;
+        v1.push_back(min);   //向v1中添加元素
+        v2.push_back(max);
+        int move1 = min;
+        int move2 = max;
+		// map<int, pair<int, int>> parent标记每个子节点的父节点，first是子节点值，second是<父节点值，父节点位置>
+        while(parent[move1].second > 0)//把min到树根的路径找出来
+        {
+            v1.push_back(parent[move1].first);  //若还未到根节点，则存储该子节点
+            move1 = parent[move1].first;            
+        }
+        while (parent[move2].second > 0)//把max到树根的路径找出来
+        {
+            v2.push_back(parent[move2].first);
+            move2 = parent[move2].first;
+        }
+        //反转一下方便查找公共串，第一个节点都是树根
+        reverse(v1.begin(), v1.end());
+        reverse(v2.begin(), v2.end());
+        int n = 0;
+        for (;v1[n] == v2[n];n++);//n是公共串的结尾            
+        return (v1.size() + v2.size() - 2 * n);                        
+    }
+};
+
+//测试
+int main()
+{
+    TreeNode **pp;//定义指向BiTNode的二级指针pp
+    TreeNode *p;//定义指向BiTNode的指针p
+    pp=&p;//pp指向p
+    p=NULL;//初始化p指向NULL
+    CreateBiTree(pp);//传入指向p的地址，创建二叉树,输入5129###3##4#68##7##
+    Tree solution;
+    cout << solution.getDis(p);
+    return 0;
+}

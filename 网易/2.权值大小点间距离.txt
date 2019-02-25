@@ -1,0 +1,70 @@
+题目：
+有一棵二叉树，树上每个点标有权值，权值各不相同，请设计一个算法算出权值最大的叶节 点到权值最小的叶节点的距离。
+二叉树每条边的距离为 1，一个节点经过多少条边到达另一 个节点为这两个节点之间的距离。 给定二叉树的根节点 root，请返回所求距离。
+
+代码：
+nt来记录父节点的编号
+父节点 数据类型可设置为：map<int, pair<int,int>>parent;//节点权值，父节点权值，父节点编号
+
+int getDis(TreeNode* root) {
+        // write code here
+        map<int, pair<int,int>>parent;//不同权值对应的父亲（权值和编号）
+        queue<TreeNode*>que;//辅助队列，按层遍历找父节点
+        que.push(root);
+        int max = -1000;//最大权值
+        int min = 1000;//最小权值
+        parent[root->val]=make_pair(0,0);//根节点的父节点
+        int cnt = 0;//起始编号
+		//1.存储父节点和子节点的大小以及父结点的位置关系，便于回溯
+        while (!que.empty())
+		{
+            TreeNode*temp = que.front();//队首元素
+            cnt++;
+            if (temp->left)
+			{
+                parent[(temp->left)->val]=make_pair(temp->val,cnt);
+                que.push(temp->left);
+            }
+            if (temp->right)  
+			{
+                parent[(temp->right)->val]=make_pair(temp->val,cnt);
+                que.push(temp->right);
+            }
+            if (temp->left == NULL&&temp->right == NULL) //如果是子节点
+			{
+                if ((temp->val)>max)
+				{
+                    max = temp->val;
+                }
+                if ((temp->val)<min)
+				{
+                    min = temp->val;
+                }
+            }
+            que.pop();
+        }
+		//2.求两个叶子节点的距离，公共父结点
+        int result1 = 0;
+        int result2 = 0;
+        while(max!=min)
+		{
+            if(parent[max].second>parent[min].second)   //当max的父结点和min的父节点不相同时
+			{  
+                max=parent[max].first;
+                result1++;
+            }
+            else if(parent[min].second>parent[max].second)
+			{
+                min=parent[min].first;
+                result2++;
+            }
+            else
+			{
+               max=parent[max].first;
+               min=parent[min].first;
+               result2++;
+               result1++;
+            }
+        }
+        return result1 + result2;
+    }
